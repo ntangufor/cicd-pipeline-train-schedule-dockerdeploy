@@ -43,14 +43,14 @@ pipeline {
                 milestone(1)
                 withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     script {
-                        sh "ssh -i /key/ec2-user $USERNAME@$prod_ip \"docker pull tangufor/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i /key/ec2-user.pem $USERNAME@$prod_ip \"docker pull tangufor/train-schedule:${env.BUILD_NUMBER}\""
                         try {
-                            sh "ssh -i /key/ec2-user $USERNAME@$prod_ip \"docker stop train-schedule\""
-                            sh "ssh -i /key/ec2-user $USERNAME@$prod_ip \"docker rm train-schedule\""
+                            sh "ssh -i /key/ec2-user.pem $USERNAME@$prod_ip \"docker stop train-schedule\""
+                            sh "ssh -i /key/ec2-user.pem $USERNAME@$prod_ip \"docker rm train-schedule\""
                         } catch (err) {
                             echo: 'caught error: $err' 
                         }
-                        sh "ssh -i /key/ec2-user $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8080:8080 -d tangufor/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i /key/ec2-user.pem $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8080:8080 -d tangufor/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
